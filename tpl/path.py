@@ -1,6 +1,30 @@
 # -*- coding:utf-8 -*-
 
 import os
+import uuid
+
+
+class TempDir(object):
+    pass
+
+
+class TempFile(object):
+    pass
+
+
+class TempPipe(object):
+    def __init__(self):
+        self.pipe_path = '/tmp/{}.pipe'.format(str(uuid.uuid4()))
+        self.pipe = None
+
+    def __enter__(self):
+        os.mkfifo(self.pipe_path)
+        self.pipe = open(self.pipe_path, 'r')
+        return self.pipe
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.pipe.close()
+        os.remove(self.pipe_path)
 
 
 def list_dirs(path):
