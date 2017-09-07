@@ -77,15 +77,12 @@ class ShellExec(threading.Thread):
 
 
 def shell_execute(command):
-    pipe_path = '/tmp/{}.pipe'.format(str(uuid.uuid4()))
-    os.mkfifo(pipe_path)
-    DEFAULT_SHELL_VARS['pipe'] = pipe_path
-    ShellExec(command, DEFAULT_SHELL_VARS).start()
-    pipe = open(pipe_path)
-    c = pipe.read()
-    c.strip()
-    context = json.loads(c)
-    pipe.close()
+    with path.TempPipe() as tp:
+        DEFAULT_SHELL_VARS['pipe'] = tp.pipe_path
+        ShellExec(command, DEFAULT_SHELL_VARS).start()
+        c = tp.pipe.read()
+        c.strip()
+        context = json.loads(c)
     return context
 
 
