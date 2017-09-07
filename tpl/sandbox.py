@@ -51,7 +51,7 @@ def py_execute(command, injected_globals=None, injected_locals=None):
     os.mkfifo(pipe_path)
     DEFAULT_PY_LOCALS['context_pipe'] = pipe_path
     injected_locals.update(DEFAULT_PY_LOCALS)
-    command = 'pipe=open(context_pipe, "w");pipe.write(json.dumps({}));pipe.close()'.format(command)
+    command = '{};pipe=open(context_pipe, "w");pipe.write(json.dumps(context));pipe.close()'.format(command)
     PyExec(command, injected_globals, injected_locals).start()
     pipe = open(pipe_path)
     context = json.loads(pipe.read())
