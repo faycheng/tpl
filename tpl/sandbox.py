@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import uuid
+import time
 import json
 import threading
 import delegator
@@ -80,9 +81,8 @@ def shell_execute(command):
     with path.TempPipe() as tp:
         DEFAULT_SHELL_VARS['pipe'] = tp.pipe_path
         ShellExec(command, DEFAULT_SHELL_VARS).start()
+        time.sleep(0.5)
         c = tp.pipe.read()
         c.strip()
         context = json.loads(c)
     return context
-
-
