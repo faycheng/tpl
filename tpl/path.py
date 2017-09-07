@@ -15,11 +15,16 @@ class TempFile(object):
 class TempPipe(object):
     def __init__(self):
         self.pipe_path = '/tmp/{}.pipe'.format(str(uuid.uuid4()))
-        self.pipe = None
+        self._pipe = None
+
+    @property
+    def pipe(self):
+        if self._pipe is None:
+            self._pipe = open(self.pipe_path, 'rb')
+        return self._pipe
 
     def __enter__(self):
         os.mkfifo(self.pipe_path)
-        self.pipe = open(self.pipe_path, 'r')
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -54,3 +59,16 @@ def get_parent_path(path, depth=1):
     for _ in range(depth):
         parent_path = os.path.abspath(os.path.dirname(parent_path))
     return parent_path
+
+
+def mkdirs(path):
+    if os.path.exists(path) and os.path.isdir(path):
+        return
+    os.makedir(path)
+
+
+def touch(path):
+    if os.path.exists(path) and os.path.isfile(path):
+        return
+    fd = open(path, 'w')
+    fd.close()
