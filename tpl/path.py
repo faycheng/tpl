@@ -18,5 +18,9 @@ def list_files(path):
 
 
 def list_all(path):
-    pass
+    assert os.path.exists(path) and os.path.isdir(path)
+    for dir in list_dirs(path):
+        yield dir
+    for file in list_files(path):
+        yield file
 
