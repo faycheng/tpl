@@ -8,11 +8,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import uuid
 import json
 import threading
+import delegator
 from tpl import path
 from tpl import prompt
+from tpl import errors
 
 
-DEFAULT_GLOBALS = {
+DEFAULT_PY_GLOBALS = {
     'os': os,
     'sys': sys,
     'json': json,
@@ -21,8 +23,12 @@ DEFAULT_GLOBALS = {
     'prompt': prompt
 }
 
-DEFAULT_LOCALS = {
+DEFAULT_PY_LOCALS = {
     'context_pipe': None
+}
+
+DEFAULT_SHELL_VARS = {
+    'pipe': None
 }
 
 
@@ -31,7 +37,7 @@ class PyExec(threading.Thread):
         self.command = command
         self.injected_globals = injected_globals
         self.injected_locals = injected_locals
-        super(PyExec, self).__init__(name='exec_tpl_constructor')
+        super(PyExec, self).__init__(name='py_exec_tpl_constructor')
 
     def run(self):
         exec(self.command, self.injected_globals, self.injected_locals)
@@ -40,15 +46,48 @@ class PyExec(threading.Thread):
 def py_execute(command, injected_globals=None, injected_locals=None):
     injected_globals = injected_globals or {}
     injected_locals = injected_locals or {}
-    injected_globals.update(DEFAULT_GLOBALS)
+    injected_globals.update(DEFAULT_PY_GLOBALS)
     pipe_path = '/tmp/{}.pipe'.format(str(uuid.uuid4()))
     os.mkfifo(pipe_path)
-    DEFAULT_LOCALS['context_pipe'] = pipe_path
-    injected_locals.update(DEFAULT_LOCALS)
+    DEFAULT_PY_LOCALS['context_pipe'] = pipe_path
+    injected_locals.update(DEFAULT_PY_LOCALS)
     command = 'pipe=open(context_pipe, "w");pipe.write(json.dumps({}));pipe.close()'.format(command)
     PyExec(command, injected_globals, injected_locals).start()
     pipe = open(pipe_path)
     context = json.loads(pipe.read())
+    pipe.close()
+    return context
+
+
+class ShellExec(threading.Thread):
+    def __init__(self, command, injected_vars=None):
+        self.command = command
+        self.injected_vars = injected_vars
+        super(ShellExec, self).__init__(name='shell_exec_tpl_constructor')
+
+    def run(self):
+        command = self.command
+        for key, value in self.injected_vars.items():
+            command = ' && '.join([
+                '{}={}'.format(key, value),
+                command
+            ])
+        command_res = delegator.run(command, block=True)
+        if command_res.return_code != 0:
+            raise errors.ShellExecError(command_res.return_code,
+                                        command_res.out,
+                                        command_res.err)
+
+
+def shell_execute(command):
+    pipe_path = '/tmp/{}.pipe'.format(str(uuid.uuid4()))
+    os.mkfifo(pipe_path)
+    DEFAULT_SHELL_VARS['pipe'] = pipe_path
+    ShellExec(command, DEFAULT_SHELL_VARS).start()
+    pipe = open(pipe_path)
+    c = pipe.read()
+    c.strip()
+    context = json.loads(c)
     pipe.close()
     return context
 
