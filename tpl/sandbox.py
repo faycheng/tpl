@@ -26,18 +26,18 @@ DEFAULT_LOCALS = {
 }
 
 
-class ExecThread(threading.Thread):
+class PyExec(threading.Thread):
     def __init__(self, command, injected_globals, injected_locals):
         self.command = command
         self.injected_globals = injected_globals
         self.injected_locals = injected_locals
-        super(ExecThread, self).__init__(name='exec_tpl_constructor')
+        super(PyExec, self).__init__(name='exec_tpl_constructor')
 
     def run(self):
         exec(self.command, self.injected_globals, self.injected_locals)
 
 
-def execute(command, injected_globals=None, injected_locals=None):
+def py_execute(command, injected_globals=None, injected_locals=None):
     injected_globals = injected_globals or {}
     injected_locals = injected_locals or {}
     injected_globals.update(DEFAULT_GLOBALS)
@@ -46,11 +46,10 @@ def execute(command, injected_globals=None, injected_locals=None):
     DEFAULT_LOCALS['context_pipe'] = pipe_path
     injected_locals.update(DEFAULT_LOCALS)
     command = 'pipe=open(context_pipe, "w");pipe.write(json.dumps({}));pipe.close()'.format(command)
-    ExecThread(command, injected_globals, injected_locals).start()
+    PyExec(command, injected_globals, injected_locals).start()
     pipe = open(pipe_path)
     context = json.loads(pipe.read())
     pipe.close()
     return context
 
 
-print(execute('{"key":"value"}'))
