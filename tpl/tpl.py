@@ -25,9 +25,14 @@ class Template(object):
             return True
         return False
 
-    def render_file(self, file):
-
-        pass
+    def render_file(self, file, context):
+        env = jinja2.Environment(undefined=jinja2.StrictUndefined)
+        if '{{' in file and '}}' in file:
+            file = env.from_string(file).render(context)
+        with open(file, 'r') as fd:
+            file_content = fd.read()
+        file_content = env.from_string(file_content).render(context)
+        return file, file_content
 
     def render_dir(self, dir, context):
         if not ('{{' in dir and '}}' in dir):
