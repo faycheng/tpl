@@ -43,7 +43,7 @@ class Template(object):
         return dir
 
     def render(self, context):
-        assert isinstance(context)
+        assert isinstance(context, dict)
         render_dirs = []
         render_files = []
         for dir in path.list_dirs(self.tpl_dir):
