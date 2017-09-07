@@ -4,6 +4,11 @@ import os
 import uuid
 
 
+HOME = os.path.abspath(os.path.expanduser('~'))
+WORK_DIR = os.path.abspath(os.getcwd())
+CWD = WORK_DIR
+
+
 class TempDir(object):
     pass
 
@@ -72,3 +77,5 @@ def touch(path):
         return
     fd = open(path, 'w')
     fd.close()
+
+
