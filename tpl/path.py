@@ -20,7 +20,7 @@ class TempPipe(object):
     def __enter__(self):
         os.mkfifo(self.pipe_path)
         self.pipe = open(self.pipe_path, 'r')
-        return self.pipe
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.pipe.close()
