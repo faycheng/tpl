@@ -32,7 +32,7 @@ class Template(object):
         with open(file, 'r') as fd:
             file_content = fd.read()
         file_content = env.from_string(file_content).render(context)
-        return file, file_content
+        return (file, file_content)
 
     def render_dir(self, dir, context):
         if not ('{{' in dir and '}}' in dir):
@@ -42,4 +42,13 @@ class Template(object):
         return dir
 
     def render(self, context):
-        pass
+        assert isinstance(context)
+        render_dirs = []
+        render_files = []
+        for dir in path.list_dirs(self.tpl_dir):
+            render_dirs.append(self.render_dir(dir, context))
+        for file in path.list_files(self.tpl_dir):
+            if self.is_ignored_file(file):
+                continue
+            render_files.append(self.render_file(file, context))
+        return render_dirs, render_files
