@@ -31,8 +31,6 @@ def construct_context_from_py(source):
         sys.path.pop()
     return context
 
-    pass
-
 
 def construct_context_from_json():
     pass
