@@ -11,10 +11,12 @@ def list_dirs(path):
 
 
 def list_files(path):
-    pass
+    assert os.path.exists(path) and os.path.isdir(path)
+    for dir_path, _, file_names in os.walk(path):
+        for file_name in file_names:
+            yield os.path.join(dir_path, file_name)
 
 
 def list_all(path):
     pass
-
 
