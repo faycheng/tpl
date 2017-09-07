@@ -26,10 +26,15 @@ class Template(object):
         return False
 
     def render_file(self, file):
+
         pass
 
-    def render_dir(self, dir):
-        pass
+    def render_dir(self, dir, context):
+        if not ('{{' in dir and '}}' in dir):
+            return dir
+        env = jinja2.Environment(undefined=jinja2.StrictUndefined)
+        dir = env.from_string(dir).render(context)
+        return dir
 
     def render(self, context):
         pass
