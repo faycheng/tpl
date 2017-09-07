@@ -20,7 +20,10 @@ class Template(object):
         self.tpl_dir = tpl_dir
 
     def is_ignored_file(self, file):
-        pass 
+        file_name = file.split('/')[-1]
+        if file_name in self.IGNORE_FILES:
+            return True
+        return False
 
     def render_file(self, file):
         pass
