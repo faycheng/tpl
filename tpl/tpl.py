@@ -32,7 +32,7 @@ class Template(object):
         with open(file, 'r') as fd:
             file_content = fd.read()
         file_content = env.from_string(file_content).render(context)
-        return (file, file_content)
+        return file, file_content
 
     def render_dir(self, dir, context):
         if not ('{{' in dir and '}}' in dir):
