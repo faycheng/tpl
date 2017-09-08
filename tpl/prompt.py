@@ -8,43 +8,37 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import prompt_toolkit
 
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.completion import Completion
-from prompt_toolkit.contrib.completers import WordCompleter
+from prompt_toolkit.completion import Completion, Completer
 from tpl import path
 
 
 history = FileHistory(os.path.join(path.HOME, '.templates', 'tpl.history'))
 
 
-class WordCompleterWithHistory(WordCompleter):
-    def __init__(self, words=None, *args, **kwargs):
-        words = words or []
-        super(WordCompleterWithHistory, self).__init__(words, *args, **kwargs)
+class WordMatchType(object):
+    CONTAINS = 'CONTAINES'
+    STARTSWITH = 'STARTSWITH'
 
-    def word_matches(self, word_before_cursor, word):
-        """ True when the word before the cursor matches. """
-        if self.ignore_case:
-            word = word.lower()
 
-        if self.match_middle:
+class WordCompleter(Completer):
+    def __init__(self, words=None, history=None, match_type=WordMatchType.CONTAINS):
+        self.words = words or []
+        self.history = history or []
+        self.match_type = match_type
+
+    def match(self, word_before_cursor, word):
+        if self.match_type == WordMatchType.CONTAINS:
             return word_before_cursor in word
-        else:
-            return word.startswith(word_before_cursor)
 
     def get_completions(self, document, complete_event):
-        if self.sentence:
-            word_before_cursor = document.text_before_cursor
-        else:
-            word_before_cursor = document.get_word_before_cursor(WORD=self.WORD)
-
-        if self.ignore_case:
-            word_before_cursor = word_before_cursor.lower()
-
-        for completion in super(WordCompleterWithHistory, self).get_completions(document, complete_event):
-            yield completion
-        for record in history:
-            if self.word_matches(word_before_cursor, record):
-                display_meta = self.meta_dict.get(record, '')
+        word_before_cursor = document.text_before_cursor.lower()
+        for word in self.words:
+            if self.match(word_before_cursor, word):
+                display_meta = '    custom'
+                yield Completion(word, -len(word_before_cursor), display_meta=display_meta)
+        for record in self.history:
+            if self.match(word_before_cursor, record):
+                display_meta = '    history'
                 yield Completion(record, -len(word_before_cursor), display_meta=display_meta)
 
 
@@ -58,4 +52,3 @@ def prompt_list():
 
 def prompt_path():
     pass
-
