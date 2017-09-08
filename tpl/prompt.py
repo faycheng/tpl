@@ -30,7 +30,7 @@ class WordCompleter(Completer):
         if self.match_type == WordMatchType.CONTAINS:
             return text_before_cursor in word
 
-    # utils unique 只能保证 custome & history 各自的列表中不出现重复，无法保证 custom & history 没有交集
+    # utils unique 只能保证 custom & history 各自的列表中不出现重复，无法保证 custom & history 没有交集
     @utils.unique
     def get_completions(self, document, complete_event):
         if self.lower is False:
