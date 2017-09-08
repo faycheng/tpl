@@ -23,6 +23,7 @@ class WordCompleter(Completer):
         self.words = words or []
         self.history = history or []
         self.match_type = match_type
+        self.lower = False
 
     def match(self, text_before_cursor, word):
         if self.match_type == WordMatchType.CONTAINS:
@@ -30,6 +31,10 @@ class WordCompleter(Completer):
 
     # TODO 需要做一下去重，避免 words 和 history yield 了相同的 completions
     def get_completions(self, document, complete_event):
+        if self.lower is False:
+            self.words = [word.lower() for word in self.words]
+            self.history = [record.lower() for record in self.history]
+            self.lower = True
         text_before_cursor = document.text_before_cursor.lower()
         for word in self.words:
             if self.match(text_before_cursor, word):
