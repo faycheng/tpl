@@ -11,6 +11,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.completion import Completion, Completer
 from prompt_toolkit.validation import Validator, ValidationError
 from tpl import path
+from tpl import utils
 
 
 class WordMatchType(object):
@@ -29,7 +30,8 @@ class WordCompleter(Completer):
         if self.match_type == WordMatchType.CONTAINS:
             return text_before_cursor in word
 
-    # TODO 需要做一下去重，避免 words 和 history yield 了相同的 completions
+    # utils unique 只能保证 custome & history 各自的列表中不出现重复，无法保证 custom & history 没有交集
+    @utils.unique
     def get_completions(self, document, complete_event):
         if self.lower is False:
             self.words = [word.lower() for word in self.words]
@@ -59,6 +61,7 @@ class PathCompleter(Completer):
         self.recursion = recursion
 
     # TODO 去重
+    @utils.unique
     def get_completions(self, document, complete_event):
         text_before_cursor = document.text_before_cursor.lower()
         list_paths = path.list_all
