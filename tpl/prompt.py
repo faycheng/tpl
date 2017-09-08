@@ -43,18 +43,15 @@ class WordCompleter(Completer):
 history = FileHistory(os.path.join(path.HOME, '.templates', 'tpl.history'))
 
 
-def prompt_str(message, default=None, completions=None, multiline=False):
-    completer = WordCompleter(words=completions, history=history)
+def prompt_str(message, default=None, multiline=False):
+    completer = WordCompleter(words=[], history=history)
     res = prompt_toolkit.prompt(message, default=default or '', history=history, completer=completer, multiline=multiline)
     return str(res)
 
 
-def prompt_number(message, default=None, completions=None, multiline=False):
-    pass
 
 
-def prompt_list():
-    pass
+
 
 
 def prompt_path():
