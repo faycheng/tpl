@@ -81,7 +81,7 @@ def get_parent_path(path, depth=1):
 def mkdirs(path):
     if os.path.exists(path) and os.path.isdir(path):
         return
-    os.makedir(path)
+    os.makedirs(path)
 
 
 def touch(path):
