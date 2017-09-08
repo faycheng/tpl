@@ -19,6 +19,10 @@ class Template(object):
     def __init__(self, tpl_dir):
         self.tpl_dir = tpl_dir
 
+    @property
+    def tpl_parent_dir(self):
+        return path.get_parent_path(self.tpl_dir, 1)
+
     def is_ignored_file(self, file):
         file_name = file.split('/')[-1]
         if file_name in self.IGNORE_FILES:
