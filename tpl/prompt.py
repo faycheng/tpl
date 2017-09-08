@@ -9,6 +9,7 @@ import prompt_toolkit
 
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.completion import Completion, Completer
+from prompt_toolkit.validation import Validator, ValidationError
 from tpl import path
 
 
@@ -40,6 +41,16 @@ class WordCompleter(Completer):
                 yield Completion(record, -len(word_before_cursor), display_meta=display_meta)
 
 
+class NumberValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if not (text and text.isdigit):
+            return
+        for index, char in enumerate(text):
+            if not char.isdigit():
+                raise ValidationError(message='Input contains non-numeric char', cursor_position=index)
+
+
 history = FileHistory(os.path.join(path.HOME, '.templates', 'tpl.history'))
 
 
@@ -50,7 +61,7 @@ def prompt_str(message, default=None, multiline=False):
 
 
 def prompt_number(message, default=None):
-    res = prompt_toolkit.prompt(message, default=default or '', history=history)
+    res = prompt_toolkit.prompt(message, default=default or '', history=history, validator=NumberValidator())
     return int(res)
 
 
@@ -62,6 +73,4 @@ def prompt_list(message, default=None, completions=None, multiline=False):
 
 def prompt_path():
     pass
-
-
 
