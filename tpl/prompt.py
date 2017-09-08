@@ -54,7 +54,10 @@ def prompt_number(message, default=None):
     return int(res)
 
 
-
+def prompt_list(message, default=None, completions=None, multiline=False):
+    completer = WordCompleter(words=completions, history=history)
+    res = prompt_toolkit.prompt(message, default=default or '', history=history, completer=completer, multiline=multiline)
+    return res
 
 
 def prompt_path():
