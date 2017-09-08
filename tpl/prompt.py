@@ -49,6 +49,9 @@ def prompt_str(message, default=None, multiline=False):
     return str(res)
 
 
+def prompt_number(message, default=None):
+    res = prompt_toolkit.prompt(message, default=default or '', history=history)
+    return int(res)
 
 
 
