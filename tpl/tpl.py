@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import jinja2
 from tpl import path
 from tpl import errors
+from tpl.render import render
 
 
 class Template(object):
@@ -31,14 +32,13 @@ class Template(object):
         return False
 
     def render_file(self, file, context):
-        env = jinja2.Environment(undefined=jinja2.StrictUndefined)
         render_file = file.replace(self.tpl_dir + '/', '')
         if '{{' in render_file and '}}' in render_file:
-            render_file = env.from_string(render_file).render(context)
+            render_file = render(render_file, context)
         render_file = os.path.join(self.output_dir, render_file)
         with open(file, 'r') as fd:
             file_content = fd.read()
-        render_file_content = env.from_string(file_content).render(context)
+        render_file_content = render(file_content, context)
         return render_file, render_file_content
 
     def render_dir(self, dir, context):
@@ -46,8 +46,7 @@ class Template(object):
         # FIXME 如果存在类似 {{dir1/dir2}} 这样的 path，render 时会出错
         if not ('{{' in render_dir and '}}' in render_dir):
             return os.path.join(self.output_dir, render_dir)
-        env = jinja2.Environment(undefined=jinja2.StrictUndefined)
-        render_dir = env.from_string(render_dir).render(context)
+        render_dir = render(render_dir, context)
         render_dir = os.path.join(self.output_dir, render_dir)
         return render_dir
 
