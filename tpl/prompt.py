@@ -60,7 +60,6 @@ class PathCompleter(Completer):
         self.match_type = match_type
         self.recursion = recursion
 
-    # TODO 去重
     @utils.unique
     def get_completions(self, document, complete_event):
         text_before_cursor = document.text_before_cursor.lower()
