@@ -16,8 +16,9 @@ class Template(object):
         'construct.py'
     ]
 
-    def __init__(self, tpl_dir):
+    def __init__(self, tpl_dir, output_dir=None):
         self.tpl_dir = tpl_dir
+        self.output_dir = output_dir or os.getcwd()
 
     @property
     def tpl_parent_dir(self):
@@ -40,11 +41,14 @@ class Template(object):
         return render_file, render_file_content
 
     def render_dir(self, dir, context):
-        if not ('{{' in dir and '}}' in dir):
-            return dir
+        render_dir = dir.replace(self.tpl_parent_dir + '/', '')
+        # FIXME 如果存在类似 {{dir1/dir2}} 这样的 path，render 时会出错
+        if not ('{{' in render_dir and '}}' in render_dir):
+            return os.path.join(self.output_dir, render_dir)
         env = jinja2.Environment(undefined=jinja2.StrictUndefined)
-        dir = env.from_string(dir).render(context)
-        return dir
+        render_dir = env.from_string(render_dir).render(context)
+        render_dir = os.path.join(self.output_dir, render_dir)
+        return render_dir
 
     def render(self, context):
         assert isinstance(context, dict)
