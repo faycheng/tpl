@@ -12,9 +12,6 @@ from prompt_toolkit.completion import Completion, Completer
 from tpl import path
 
 
-history = FileHistory(os.path.join(path.HOME, '.templates', 'tpl.history'))
-
-
 class WordMatchType(object):
     CONTAINS = 'CONTAINES'
     STARTSWITH = 'STARTSWITH'
@@ -30,6 +27,7 @@ class WordCompleter(Completer):
         if self.match_type == WordMatchType.CONTAINS:
             return word_before_cursor in word
 
+    # TODO 需要做一下去重，避免 words 和 history yield 了相同的 completions
     def get_completions(self, document, complete_event):
         word_before_cursor = document.text_before_cursor.lower()
         for word in self.words:
@@ -42,8 +40,13 @@ class WordCompleter(Completer):
                 yield Completion(record, -len(word_before_cursor), display_meta=display_meta)
 
 
-def prompt(message, type=None, default=None, completer=None, multiline=False):
-    pass
+history = FileHistory(os.path.join(path.HOME, '.templates', 'tpl.history'))
+
+
+def prompt_str(message, default=None, completions=None, multiline=False):
+    completer = WordCompleter(words=completions, history=history)
+    return prompt_toolkit.prompt(message, default=default or '', history=history, completer=completer, multiline=multiline)
+
 
 
 def prompt_list():
@@ -52,3 +55,7 @@ def prompt_list():
 
 def prompt_path():
     pass
+
+
+
+
