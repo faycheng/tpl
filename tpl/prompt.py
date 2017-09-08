@@ -24,21 +24,51 @@ class WordCompleter(Completer):
         self.history = history or []
         self.match_type = match_type
 
-    def match(self, word_before_cursor, word):
+    def match(self, text_before_cursor, word):
         if self.match_type == WordMatchType.CONTAINS:
-            return word_before_cursor in word
+            return text_before_cursor in word
 
     # TODO 需要做一下去重，避免 words 和 history yield 了相同的 completions
     def get_completions(self, document, complete_event):
-        word_before_cursor = document.text_before_cursor.lower()
+        text_before_cursor = document.text_before_cursor.lower()
         for word in self.words:
-            if self.match(word_before_cursor, word):
+            if self.match(text_before_cursor, word):
                 display_meta = '    custom'
-                yield Completion(word, -len(word_before_cursor), display_meta=display_meta)
+                yield Completion(word, -len(text_before_cursor), display_meta=display_meta)
         for record in self.history:
-            if self.match(word_before_cursor, record):
+            if self.match(text_before_cursor, record):
                 display_meta = '    history'
-                yield Completion(record, -len(word_before_cursor), display_meta=display_meta)
+                yield Completion(record, -len(text_before_cursor), display_meta=display_meta)
+
+
+class PathMatchType(object):
+    DIRS = 'DIRS'
+    FILES = 'FILES'
+    ALL = 'ALL'
+
+
+class PathCompleter(Completer):
+    def __init__(self, root, match_type=PathMatchType.ALL, recursion=False):
+        self.root = root
+        self.match_type = match_type
+        self.recursion = recursion
+
+    # TODO 去重
+    def get_completions(self, document, complete_event):
+        text_before_cursor = document.text_before_cursor.lower()
+        list_paths = path.list_all
+        if self.match_type == PathMatchType.DIRS:
+            list_paths = path.list_dirs
+        if self.match_type == PathMatchType.FILES:
+            list_paths = path.list_files
+        if self.match_type == PathMatchType.ALL:
+            list_paths = path.list_all
+        for p in list_paths(self.root, recursion=self.recursion):
+            if text_before_cursor in p.lower():
+                yield Completion(p, start_position=-len(text_before_cursor), display_meta=self.match_type)
+            p_name = p.rstrip('/').split('/')[-1]
+            if text_before_cursor in p_name.lower():
+                yield Completion(p, start_position=-len(text_before_cursor), display_meta=self.match_type)
 
 
 class NumberValidator(Validator):
@@ -71,6 +101,9 @@ def prompt_list(message, default=None, completions=None, multiline=False):
     return res
 
 
-def prompt_path():
-    pass
+def prompt_path(message, root, type='DIR', recursion=False, default=None):
+    completer = PathCompleter(root, match_type=type, recursion=False)
+    res = prompt_toolkit.prompt(message, default=default or '', completer=completer)
+    return res
+
 
