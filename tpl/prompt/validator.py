@@ -25,3 +25,13 @@ class FloatValidator(Validator):
             raise ValidationError(message='Input must be float')
 
 
+class BoolValidator(Validator):
+    def validate(self, document):
+        from .consts import true_strs, false_strs
+        text = document.text
+        bool_strs = [true_strs] + [false_strs]
+        if text.lower() not in bool_strs:
+            raise ValidationError('Input must be one of {}'.format(bool_strs))
+
+
+
