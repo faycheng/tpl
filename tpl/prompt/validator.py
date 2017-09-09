@@ -34,4 +34,13 @@ class BoolValidator(Validator):
             raise ValidationError('Input must be one of {}'.format(bool_strs))
 
 
+class ListValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        try:
+            list(text)
+        except ValueError:
+            raise ValidationError('Input must be list')
+
+
 
