@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
-from tpl.tpl import Template
+from tpl.core import Template
 from tpl import path
 from tpl import constructor
 
