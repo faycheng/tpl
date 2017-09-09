@@ -24,7 +24,7 @@ def panic_if_path_not_exist(path, type):
         sys.exit(1)
 
 
-def panic_wich_exit_code(message='', exit_code=1):
+def panic_with_exit_code(message='', exit_code=1):
     click.echo('{}\texit code:{}'.format(message, exit_code))
 
 
@@ -80,15 +80,15 @@ def render(namespace, branch, template, output_dir, echo):
     panic_if_path_not_exist(tpl_dir, 'dir')
     panic_if_path_not_exist(output_dir, 'dir')
     if not (os.path.exists(tpl_dir) and os.path.isdir(tpl_dir)):
-        panic_wich_exit_code('tpl dir({}) not exist'.format(tpl_dir), 1)
+        panic_with_exit_code('tpl dir({}) not exist'.format(tpl_dir), 1)
     if branch:
         check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(repo_dir, branch)
         check_out_exit_code = os.system(check_out_command)
         if check_out_exit_code != 0:
-            panic_wich_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
+            panic_with_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
     constructor_script = locate_constructor_script(tpl_dir)
     if constructor_script is None:
-        panic_wich_exit_code('can not find constructor script in {}'.format(tpl_dir), 1)
+        panic_with_exit_code('can not find constructor script in {}'.format(tpl_dir), 1)
     context = construct_context(constructor_script)
     tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir)
     rendered_dirs, rendered_files = tpl.render(context)
