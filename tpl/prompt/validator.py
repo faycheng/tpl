@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import os
 import json
 from prompt_toolkit.validation import Validator, ValidationError
 
@@ -52,3 +53,9 @@ class DictValidator(Validator):
         except ValueError:
             raise ValidationError('Input must be json')
 
+
+class DirValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if not (os.path.exists(text) and os.path.isdir(text)):
+            raise ValidationError('Input must be valid dir path')
