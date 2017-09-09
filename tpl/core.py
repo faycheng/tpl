@@ -12,6 +12,10 @@ class Template(object):
         'construct.sh',
         'construct.py'
     ]
+    IGNORE_DIRS = [
+        '__pycache__',
+        '.vscode'
+    ]
 
     def __init__(self, tpl_dir, output_dir=None):
         self.tpl_dir = tpl_dir
@@ -20,6 +24,12 @@ class Template(object):
     @property
     def tpl_parent_dir(self):
         return path.get_parent_path(self.tpl_dir, 1)
+
+    def is_ignored_dir(self, dir):
+        dir_name = dir.split('/')[-1]
+        if dir_name in self.IGNORE_DIRS:
+            return True
+        return False
 
     def is_ignored_file(self, file):
         file_name = file.split('/')[-1]
@@ -53,6 +63,8 @@ class Template(object):
         render_dirs = []
         render_files = []
         for dir in path.list_dirs(self.tpl_dir):
+            if self.is_ignored_dir(dir):
+                continue
             render_dirs.append(self.render_dir(dir, context))
         for file in path.list_files(self.tpl_dir):
             if self.is_ignored_file(file):
@@ -61,3 +73,4 @@ class Template(object):
         return render_dirs, render_files
 
 
+# Template('/Users/chengfei/.templates/python-tpl/single_file/tpl', '/Users/chengfei').render({})
