@@ -50,6 +50,21 @@ def pull(namespace, template):
 
 
 @tpl.command()
+def desc():
+    pass
+
+
+@tpl.command()
+def update():
+    pass
+
+
+@tpl.command()
+def config():
+    pass
+
+
+@tpl.command()
 @click.argument('template', type=str)
 @click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE)
 @click.option('--branch', type=str, default=DEFAULT_BRANCH)
