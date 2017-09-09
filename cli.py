@@ -81,10 +81,11 @@ def render(namespace, branch, template, output_dir, echo):
     panic_if_path_not_exist(output_dir, 'dir')
     if not (os.path.exists(tpl_dir) and os.path.isdir(tpl_dir)):
         panic_wich_exit_code('tpl dir({}) not exist'.format(tpl_dir), 1)
-    check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(repo_dir, branch)
-    check_out_exit_code = os.system(check_out_command)
-    if check_out_exit_code != 0:
-        panic_wich_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
+    if branch:
+        check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(repo_dir, branch)
+        check_out_exit_code = os.system(check_out_command)
+        if check_out_exit_code != 0:
+            panic_wich_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
     constructor_script = locate_constructor_script(tpl_dir)
     if constructor_script is None:
         panic_wich_exit_code('can not find constructor script in {}'.format(tpl_dir), 1)
