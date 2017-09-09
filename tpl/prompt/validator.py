@@ -16,6 +16,12 @@ class IntValidator(Validator):
                 raise ValidationError(message='Input contains non-numeric char', cursor_position=index)
 
 
-
+class FloatValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        try:
+            float(text)
+        except ValueError:
+            raise ValidationError(message='Input must be float')
 
 
