@@ -35,22 +35,22 @@ def prompt(message, type='STR', default=None, multiline=False):
     converter = getattr(PromptType, type)
     completer = WordCompleter(words=[], history=history)
     res = prompt_toolkit.prompt(message, default=default or '', history=history,
-                                validator=converter.validator, completer=completer, multiline=multiline)
-    return converter.convert(res)
+                                validator=converter.value.validator, completer=completer, multiline=multiline)
+    return converter.value.convert(res)
 
 
 def prompt_list(message, type='STR', default=None, completions=None, multiline=False):
     converter = getattr(PromptType, type)
     completer = WordCompleter(words=completions, history=history)
     res = prompt_toolkit.prompt(message, default=default or '', history=history,
-                                validator=converter.validator, completer=completer, multiline=multiline)
-    return converter.convert(res)
+                                validator=converter.value.validator, completer=completer, multiline=multiline)
+    return converter.value.convert(res)
 
 
 def prompt_path(message, root, type='DIR', recursion=False, default=None):
     converter = getattr(PromptType, type)
     completer = PathCompleter(root, match_type=type, recursion=recursion)
     res = prompt_toolkit.prompt(message, default=default or '', completer=completer,
-                                validator=converter.validator)
-    return converter.convert(res)
+                                validator=converter.value.validator)
+    return converter.value.convert(res)
 
