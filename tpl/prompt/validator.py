@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import json
 from prompt_toolkit.validation import Validator, ValidationError
 
 
@@ -43,4 +44,11 @@ class ListValidator(Validator):
             raise ValidationError('Input must be list')
 
 
+class DictValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        try:
+            json.loads(text)
+        except ValueError:
+            raise ValidationError('Input must be json')
 
