@@ -66,10 +66,15 @@ def render(namespace, branch, template, output_dir, echo):
         sys.exit(1)
 
     check_out_command = 'old_path=$(pwd -P);cd {};git checkout {};cd $old_path'.format(repo_dir, branch)
-    if check_out_command != 0:
-        sys.exit(check_out_command)
+    check_out_exit_code = os.system(check_out_command)
+    click.echo(check_out_exit_code)
+    if check_out_exit_code != 0:
+        sys.exit(check_out_exit_code)
 
     constructor_script = locate_constructor_script(tpl_dir)
+    if constructor_script is None:
+        click.echo('can not find constructor script in {}'.format(tpl_dir))
+        sys.exit(1)
     context = construct_context(constructor_script)
     tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir)
     rendered_dirs, rendered_files = tpl.render(context)
@@ -79,12 +84,15 @@ def render(namespace, branch, template, output_dir, echo):
             break
         path.mkdirs(dir)
     for file, file_content in rendered_files:
+        if echo is True:
+            click.echo('render file: {}\n{}'.format(file, file_content))
+            break
         file_parent_dir = path.get_parent_path(file, 1)
         if not os.path.exists(file_parent_dir):
             path.mkdirs(file_parent_dir)
         with open(file, 'w') as fd:
             fd.write(file_content)
-    click.echo('render {} successfully')
+    click.echo('render {}/{}:{} successfully'.format(namespace, template, branch))
 
 
 if __name__ == '__main__':
