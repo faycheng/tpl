@@ -91,7 +91,7 @@ class NumberValidator(Validator):
 history = FileHistory(os.path.join(path.HOME, '.templates', 'tpl.history'))
 
 
-def prompt_str(message, default=None, multiline=False):
+def prompt(message, default=None, multiline=False):
     completer = WordCompleter(words=[], history=history)
     res = prompt_toolkit.prompt(message, default=default or '', history=history, completer=completer, multiline=multiline)
     return str(res)
