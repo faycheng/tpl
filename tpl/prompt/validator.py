@@ -59,3 +59,10 @@ class DirValidator(Validator):
         text = document.text
         if not (os.path.exists(text) and os.path.isdir(text)):
             raise ValidationError('Input must be valid dir path')
+
+
+class FileValidator(Validator):
+    def validate(self, document):
+        text = document.text
+        if not (os.path.exists(text) and os.path.isfile(text)):
+            raise ValidationError('Input must be valid file path')
