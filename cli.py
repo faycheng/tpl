@@ -80,7 +80,7 @@ def render(namespace, branch, template, output_dir, echo):
         click.echo('tpl dir({}) not exist'.format(tpl_dir))
         sys.exit(1)
 
-    check_out_command = 'old_path=$(pwd -P);cd {};git checkout {};cd $old_path'.format(repo_dir, branch)
+    check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(repo_dir, branch)
     check_out_exit_code = os.system(check_out_command)
     click.echo(check_out_exit_code)
     if check_out_exit_code != 0:
