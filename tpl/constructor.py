@@ -4,16 +4,12 @@ import sys
 import uuid
 import delegator
 import gettext
-
-_ = gettext.gettext
-
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
 import json
 from tpl import path
 from tpl import errors
 from tpl import sandbox
+
+_ = gettext.gettext
 
 
 def construct_context_from_shell(source):
