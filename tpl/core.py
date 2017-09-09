@@ -25,6 +25,8 @@ class Template(object):
         file_name = file.split('/')[-1]
         if file_name in self.IGNORE_FILES:
             return True
+        if file_name.endswith('.pyc'):
+            return True
         return False
 
     def render_file(self, file, context):
@@ -57,3 +59,5 @@ class Template(object):
                 continue
             render_files.append(self.render_file(file, context))
         return render_dirs, render_files
+
+
