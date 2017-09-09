@@ -12,7 +12,6 @@ TPL_STORAGE_DIR = os.path.join(path.HOME, '.templates')
 
 OFFICIAL_NAMESPACE = 'python-tpl'
 SEPARATOR = ':'
-DEFAULT_BRANCH = 'master'
 
 
 def panic_if_path_not_exist(path, type):
@@ -23,6 +22,10 @@ def panic_if_path_not_exist(path, type):
     if not type_validate(path):
         click.echo('path must be {}'.format(type))
         sys.exit(1)
+
+
+def panic_wich_exit_code(message='', exit_code=1):
+    click.echo('{}\texit code:{}'.format(message, exit_code))
 
 
 def locate_constructor_script(tpl_dir):
@@ -67,7 +70,7 @@ def config():
 @tpl.command()
 @click.argument('template', type=str)
 @click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE)
-@click.option('--branch', type=str, default=DEFAULT_BRANCH)
+@click.option('--branch', type=str, default='')
 @click.option('--output_dir', type=str, default=path.CWD)
 @click.option('--echo', is_flag=True)
 def render(namespace, branch, template, output_dir, echo):
@@ -77,19 +80,14 @@ def render(namespace, branch, template, output_dir, echo):
     panic_if_path_not_exist(tpl_dir, 'dir')
     panic_if_path_not_exist(output_dir, 'dir')
     if not (os.path.exists(tpl_dir) and os.path.isdir(tpl_dir)):
-        click.echo('tpl dir({}) not exist'.format(tpl_dir))
-        sys.exit(1)
-
+        panic_wich_exit_code('tpl dir({}) not exist'.format(tpl_dir), 1)
     check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(repo_dir, branch)
     check_out_exit_code = os.system(check_out_command)
-    click.echo(check_out_exit_code)
     if check_out_exit_code != 0:
-        sys.exit(check_out_exit_code)
-
+        panic_wich_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
     constructor_script = locate_constructor_script(tpl_dir)
     if constructor_script is None:
-        click.echo('can not find constructor script in {}'.format(tpl_dir))
-        sys.exit(1)
+        panic_wich_exit_code('can not find constructor script in {}'.format(tpl_dir), 1)
     context = construct_context(constructor_script)
     tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir)
     rendered_dirs, rendered_files = tpl.render(context)
