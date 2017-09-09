@@ -4,6 +4,11 @@ from functools import wraps
 from collections import Iterable
 
 
+true_strs = ['true', 'yes', 't', 'y']
+false_strs = ['false', 'no', 'f', 'n']
+bool_strs = true_strs + false_strs
+
+
 def _iter(obj):
     itered_item = set()
     for item in obj:
@@ -22,3 +27,11 @@ def unique(func):
 
     return inner
 
+
+def str2boo(str, strict=True):
+    if str.lower() in true_strs:
+        return True
+    if str.lower() in false_strs:
+        return False
+    if strict is True:
+        raise ValueError('input({}) must be in {}'.format(str, bool_strs))
