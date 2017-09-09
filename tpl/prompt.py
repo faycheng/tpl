@@ -97,11 +97,6 @@ def prompt(message, default=None, multiline=False):
     return str(res)
 
 
-def prompt_number(message, default=None):
-    res = prompt_toolkit.prompt(message, default=default or '', history=history, validator=NumberValidator())
-    return int(res)
-
-
 def prompt_list(message, default=None, completions=None, multiline=False):
     completer = WordCompleter(words=completions, history=history)
     res = prompt_toolkit.prompt(message, default=default or '', history=history, completer=completer, multiline=multiline)
