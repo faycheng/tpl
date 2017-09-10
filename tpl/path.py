@@ -44,7 +44,7 @@ def list_dirs(path, recursion=True):
             for dir_name in dir_names:
                 yield os.path.join(dir_path, dir_name)
     if recursion is False:
-        for dir in [p for p in os.listdir(path) if os.path.isdir(p)]:
+        for dir in [p for p in os.listdir(path) if os.path.isdir(os.path.join(path, p))]:
             yield os.path.join(path, dir)
 
 
@@ -55,7 +55,7 @@ def list_files(path, recursion=True):
             for file_name in file_names:
                 yield os.path.join(dir_path, file_name)
     if recursion is False:
-        for file in [p for p in os.listdir(path) if os.path.isfile(p)]:
+        for file in [p for p in os.listdir(path) if os.path.isfile(os.path.join(path, p))]:
             yield os.path.join(path, file)
 
 
