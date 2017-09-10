@@ -49,6 +49,7 @@ class ShellExec(threading.Thread):
                                         command_res.err)
 
 
+# FIXME 需要添加超时支持
 def shell_execute(command):
     with path.TempPipe() as tp:
         DEFAULT_SHELL_VARS['pipe'] = tp.pipe_path
