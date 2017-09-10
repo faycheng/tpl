@@ -19,8 +19,7 @@ def construct_context_from_py(source):
     source_name = source.split('/')[-1][:-3]
     sys.path.insert(0, path.get_parent_path(source, 1))
     try:
-        construct = __import__(source_name).construct
-        context = construct()
+        context = __import__(source_name).construct()
     finally:
         sys.path.remove(path.get_parent_path(source, 1))
     return context
