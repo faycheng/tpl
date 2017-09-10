@@ -67,10 +67,6 @@ def update(template):
         click.echo('update {} successfully'.format(template))
 
 
-@tpl.command()
-def config():
-    pass
-
 
 @tpl.command()
 @click.argument('template', type=str)
