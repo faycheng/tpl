@@ -39,22 +39,34 @@ def locate_constructor_script(tpl_dir):
 
 @click.group()
 def tpl():
-    pass
+    """Command line utility for generating files or directories from template"""
 
 
-@tpl.command()
+@tpl.command(short_help='pull repo of template from github')
 @click.argument('template', type=str)
-@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE)
+@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
 def pull(namespace, template):
+    """
+    \b
+    pull repo of template from github
+    ex: pull hello_world --namespace python-tpl
+    """
     clone_url = 'https://github.com/{}/{}.git'.format(namespace, template)
     clone_dir = '{}/{}/{}'.format(TPL_STORAGE_DIR, namespace, template)
     clone_command = 'git clone {} {}'.format(clone_url, clone_dir)
     os.system(clone_command)
 
 
-@tpl.command()
-@click.option('--template', type=str, default='')
+@tpl.command(short_help='update specified template or all templates')
+@click.option('--template', type=str, default='', help='name of template')
 def update(template):
+    """
+    \b
+    update specified template or all templates
+    ex:
+    update specified template:  update hello_world
+    update all templates:       update
+    """
     templates = [] if template is None else [template]
     if not template:
         templates = path.list_dirs(TPL_STORAGE_DIR, recursion=False)
@@ -67,14 +79,18 @@ def update(template):
         click.echo('update {} successfully'.format(template))
 
 
-
-@tpl.command()
+@tpl.command(short_help='generate files or dirs to output dir according to specified template')
 @click.argument('template', type=str)
-@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE)
-@click.option('--branch', type=str, default='')
-@click.option('--output_dir', type=str, default=path.CWD)
-@click.option('--echo', is_flag=True)
+@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
+@click.option('--branch', type=str, default='', help='branch of template')
+@click.option('--output_dir', type=str, default=path.CWD, help='output dir in disk')
+@click.option('--echo', is_flag=True, help='flag of echo mode, output_dir will be ignored while echo is specified')
 def render(namespace, branch, template, output_dir, echo):
+    """
+    \b
+    generate files or dirs to output dir according to specified template
+    ex: render hello_world --namespace python-tpl --branch master --output_dir $HOME
+    """
     repo_dir = '{}/{}/{}'.format(TPL_STORAGE_DIR, namespace, template)
     tpl_dir = os.path.join(repo_dir, 'tpl')
     panic_if_path_not_exist(repo_dir, 'dir')
