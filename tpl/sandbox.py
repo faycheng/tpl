@@ -47,7 +47,7 @@ def py_execute(command, injected_globals=None, injected_locals=None):
     with path.TempPipe() as tp:
         DEFAULT_PY_LOCALS['context_pipe'] = tp.pipe_path
         injected_locals.update(DEFAULT_PY_LOCALS)
-        command = '{};pipe=open(context_pipe, "w");pipe.write(json.dumps(context));pipe.close()'.format(command)
+        command = 'context={};pipe=open(context_pipe, "w");pipe.write(json.dumps(context));pipe.close()'.format(command)
         PyExec(command, injected_globals, injected_locals).start()
         context = json.loads(tp.pipe.read())
     return context
