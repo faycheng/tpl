@@ -2,7 +2,6 @@
 import os
 import sys
 import gettext
-import copy
 from tpl import path
 from tpl import sandbox
 
@@ -23,16 +22,13 @@ def construct_context_from_shell(source):
 
 def construct_context_from_py(source):
     assert os.path.exists(source) and os.path.isfile(source)
-    injected_locals = {}
-    source_name = source.split('/')[-1].split('.')[0]
+    source_name = source.split('/')[-1][:-3]
+    sys.path.insert(0, path.get_parent_path(source, 1))
     try:
-        sys.path.insert(0, path.get_parent_path(source, 1))
         construct = __import__(source_name).construct
+        context = construct()
     finally:
         sys.path.remove(path.get_parent_path(source, 1))
-    injected_locals.setdefault('construct', construct)
-    command = "construct()"
-    context = sandbox.py_execute(command, injected_locals=injected_locals)
     return context
 
 
