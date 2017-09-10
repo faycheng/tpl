@@ -90,7 +90,7 @@ def update(template, namespace):
         update_template_repo(tpl_repo)
 
 
-@tpl.command(short_help='generate files or dirs to output dir according to specified template')
+@tpl.command(short_help='generate files or dirs to output dir')
 @click.argument('template', type=str)
 @click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
 @click.option('--branch', type=str, default='', help='branch of template')
