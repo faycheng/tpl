@@ -1,12 +1,8 @@
 # -*- coding:utf-8 -*-
 import os
 import sys
-import uuid
-import delegator
 import gettext
-import json
 from tpl import path
-from tpl import errors
 from tpl import sandbox
 
 _ = gettext.gettext
