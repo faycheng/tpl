@@ -8,12 +8,6 @@ from tpl import sandbox
 _ = gettext.gettext
 
 
-try:
-    import __builtin__ as builtins
-except ImportError:
-    import builtins
-
-
 def construct_context_from_shell(source):
     assert os.path.exists(source) and os.path.isfile(source)
     command = 'source {}'.format(source)
