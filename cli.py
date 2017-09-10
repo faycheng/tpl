@@ -53,13 +53,18 @@ def pull(namespace, template):
 
 
 @tpl.command()
-def desc():
-    pass
-
-
-@tpl.command()
-def update():
-    pass
+@click.option('--template', type=str, default='')
+def update(template):
+    templates = [] if template is None else [template]
+    if not template:
+        templates = path.list_dirs(TPL_STORAGE_DIR, recursion=False)
+    for template in templates:
+        update_command = 'old_path=$(pwd -P) && cd {};git pull --all && cd $old_path'.format(template)
+        command_exit_code = os.system(update_command)
+        if command_exit_code != 0:
+            click.echo('failed to update {}'.format(template))
+            continue
+        click.echo('update {} successfully'.format(template))
 
 
 @tpl.command()
