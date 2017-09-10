@@ -37,6 +37,18 @@ def locate_constructor_script(tpl_dir):
         return py_constructor_script
 
 
+def update_template_repo(tpl_dir):
+    if not (os.path.exists(tpl_dir) and os.path.isdir(tpl_dir)):
+        click.echo('template repo({}) not exist'.format(tpl_dir))
+        return
+    update_command = 'old_path=$(pwd -P) && cd {};git pull --all && cd $old_path'.format(tpl_dir)
+    command_exit_code = os.system(update_command)
+    if command_exit_code != 0:
+        click.echo('failed to update {}, exit code:{}'.format(tpl_dir, command_exit_code))
+        return
+    click.echo('update {} successfully'.format(tpl_dir))
+
+
 @click.group()
 def tpl():
     """Command line utility for generating files or directories from template"""
@@ -59,24 +71,23 @@ def pull(namespace, template):
 
 @tpl.command(short_help='update specified template or all templates')
 @click.option('--template', type=str, default='', help='name of template')
-def update(template):
+@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
+def update(template, namespace):
     """
     \b
     update specified template or all templates
     ex:
-    update specified template:  update hello_world
-    update all templates:       update
+    update specified template:                      update hello_world --namespace python-tpl
+    update all templates of specified namespace:    update --namespace $YOUR_NAMSPACE
+    update all official templates:                  update
     """
-    templates = [] if template is None else [template]
-    if not template:
-        templates = path.list_dirs(TPL_STORAGE_DIR, recursion=False)
-    for template in templates:
-        update_command = 'old_path=$(pwd -P) && cd {};git pull --all && cd $old_path'.format(template)
-        command_exit_code = os.system(update_command)
-        if command_exit_code != 0:
-            click.echo('failed to update {}'.format(template))
-            continue
-        click.echo('update {} successfully'.format(template))
+    namespace_dir = os.path.join(TPL_STORAGE_DIR, namespace)
+    if template:
+        update_template_repo(os.path.join(namespace_dir, template))
+        sys.exit(0)
+
+    for tpl_repo in path.list_dirs(namespace_dir, recursion=False):
+        update_template_repo(tpl_repo)
 
 
 @tpl.command(short_help='generate files or dirs to output dir according to specified template')
