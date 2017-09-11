@@ -28,11 +28,11 @@ def panic_with_exit_code(message='', exit_code=1):
     click.echo('{}\texit code:{}'.format(message, exit_code))
 
 
-def locate_constructor_script(tpl_dir):
-    shell_constructor_script = os.path.join(tpl_dir, 'constructor.sh')
+def locate_constructor_script(repo_dir):
+    shell_constructor_script = os.path.join(repo_dir, 'constructor.sh')
     if os.path.exists(shell_constructor_script) and os.path.isfile(shell_constructor_script):
         return shell_constructor_script
-    py_constructor_script = os.path.join(tpl_dir, 'constructor.py')
+    py_constructor_script = os.path.join(repo_dir, 'constructor.py')
     if os.path.exists(py_constructor_script) and os.path.isfile(py_constructor_script):
         return py_constructor_script
 
@@ -96,7 +96,8 @@ def update(template, namespace):
 @click.option('--branch', type=str, default='', help='branch of template')
 @click.option('--output_dir', type=str, default=path.CWD, help='output dir in disk')
 @click.option('--echo', is_flag=True, help='flag of echo mode, output_dir will be ignored while echo is specified')
-def render(namespace, branch, template, output_dir, echo):
+@click.option('--anti_ignores', type=str, default='', help='anti-ignored files or dirs')
+def render(namespace, branch, template, output_dir, echo, anti_ignores):
     """
     \b
     generate files or dirs to output dir according to specified template
@@ -114,11 +115,12 @@ def render(namespace, branch, template, output_dir, echo):
         check_out_exit_code = os.system(check_out_command)
         if check_out_exit_code != 0:
             panic_with_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
-    constructor_script = locate_constructor_script(tpl_dir)
+    constructor_script = locate_constructor_script(repo_dir)
     if constructor_script is None:
         panic_with_exit_code('can not find constructor script in {}'.format(tpl_dir), 1)
     context = construct_context(constructor_script)
-    tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir)
+    anti_ignores = [ignore.strip() for ignore in anti_ignores.split(',') if ignore]
+    tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir, anti_ignores=anti_ignores)
     rendered_dirs, rendered_files = tpl.render(context)
     for dir in rendered_dirs:
         if echo is True:

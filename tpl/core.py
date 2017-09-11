@@ -17,8 +17,9 @@ class Template(object):
         '.vscode'
     ]
 
-    def __init__(self, tpl_dir, output_dir=None):
+    def __init__(self, tpl_dir, output_dir=None, anti_ignores=None):
         self.tpl_dir = tpl_dir
+        self.anti_ignores = anti_ignores or []
         self.output_dir = output_dir or os.getcwd()
 
     @property
@@ -27,12 +28,16 @@ class Template(object):
 
     def is_ignored_dir(self, dir):
         dir_name = dir.split('/')[-1]
+        if dir_name in self.anti_ignores:
+            return False
         if dir_name in self.IGNORE_DIRS:
             return True
         return False
 
     def is_ignored_file(self, file):
         file_name = file.split('/')[-1]
+        if file_name in self.anti_ignores:
+            return False
         if file_name in self.IGNORE_FILES:
             return True
         if file_name.endswith('.pyc'):
@@ -62,6 +67,7 @@ class Template(object):
         assert isinstance(context, dict)
         render_dirs = []
         render_files = []
+        print(self.tpl_dir)
         for dir in path.list_dirs(self.tpl_dir):
             if self.is_ignored_dir(dir):
                 continue
