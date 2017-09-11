@@ -9,8 +9,8 @@ from tpl.render import render
 
 class Template(object):
     IGNORE_FILES = [
-        'construct.sh',
-        'construct.py'
+        'constructor.sh',
+        'constructor.py'
     ]
     IGNORE_DIRS = [
         '__pycache__',
