@@ -4,6 +4,9 @@ A command line utility for generating files or directories from template.
 
 Official templates: [https://github.com/python-tpl](https://github.com/python-tpl)
 
+Watch the demo:
+
+[![asciicast](https://asciinema.org/a/137513.png)](https://asciinema.org/a/137513)
 
 ### Main Features
 
