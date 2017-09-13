@@ -1,10 +1,9 @@
 # -*- coding:utf-8 -*-
 
 import os
-import jinja2
-from tpl import path
-from tpl import errors
 from tpl.render import render
+from candy.path.helper import get_parent_path
+from candy.path.iter import list_dirs, list_files
 
 
 class Template(object):
@@ -24,7 +23,7 @@ class Template(object):
 
     @property
     def tpl_parent_dir(self):
-        return path.get_parent_path(self.tpl_dir, 1)
+        return get_parent_path(self.tpl_dir, 1)
 
     def is_ignored_dir(self, dir):
         dir_name = dir.split('/')[-1]
@@ -68,15 +67,12 @@ class Template(object):
         render_dirs = []
         render_files = []
         print(self.tpl_dir)
-        for dir in path.list_dirs(self.tpl_dir):
+        for dir in list_dirs(self.tpl_dir):
             if self.is_ignored_dir(dir):
                 continue
             render_dirs.append(self.render_dir(dir, context))
-        for file in path.list_files(self.tpl_dir):
+        for file in list_files(self.tpl_dir):
             if self.is_ignored_file(file):
                 continue
             render_files.append(self.render_file(file, context))
         return render_dirs, render_files
-
-
-# Template('/Users/chengfei/.templates/python-tpl/single_file/tpl', '/Users/chengfei').render({})
