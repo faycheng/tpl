@@ -2,5 +2,7 @@ language: python
 python:
   - "3.6"
 script:
+  - git submodule init
+  - git submodule update
   - ./manager.sh install
   - ./manager.sh test
