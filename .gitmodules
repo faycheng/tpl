@@ -7,3 +7,9 @@
 [submodule "candy/submodules/candy_prompt"]
 	path = candy/submodules/candy_prompt
 	url = https://github.com/faycheng/candy_prompt.git
+[submodule "submodules/candy_enums"]
+	path = submodules/candy_enums
+	url = https://github.com/faycheng/candy_enums.git
+[submodule "candy/submodules/candy_enums"]
+	path = candy/submodules/candy_enums
+	url = https://github.com/faycheng/candy_enums.git
