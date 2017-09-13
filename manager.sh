@@ -46,6 +46,21 @@ clean() {
 
 install(){
 	clean
+	tpl_dir=$(pwd -P)
+	submodules_dir=$tpl_dir/candy/submodules
+	cd $submodules_dir/candy_enums
+	git pull && python setup.py install && clean
+
+	cd $submodules_dir/candy_utils
+	git pull && python setup.py install && clean
+
+	cd $submodules_dir/candy_path
+	git pull && python setup.py install && clean
+
+	cd $submodules_dir/candy_prompt
+	git pull && python setup.py install && clean
+
+	cd $tpl_dir
 	python setup.py install
 	clean
 }
