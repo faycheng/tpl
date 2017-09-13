@@ -1,0 +1,6 @@
+[submodule "candy/submodules/candy_path"]
+	path = candy/submodules/candy_path
+	url = https://github.com/faycheng/candy_path.git
+[submodule "candy/submodules/candy_utils"]
+	path = candy/submodules/candy_utils
+	url = https://github.com/faycheng/candy_utils.git
