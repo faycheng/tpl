@@ -4,12 +4,14 @@ import os
 import click
 import sys
 
-from tpl import path
 from tpl.hook import run_hook
 from tpl.core import Template
 from tpl.constructor import construct_context
+from candy.path import HOME, CWD
+from candy.path.helper import mkdirs, get_parent_path
+from candy.path.iter import list_dirs
 
-TPL_STORAGE_DIR = os.path.join(path.HOME, '.templates')
+TPL_STORAGE_DIR = os.path.join(HOME, '.templates')
 
 OFFICIAL_NAMESPACE = 'python-tpl'
 SEPARATOR = ':'
@@ -93,7 +95,7 @@ def update(template, namespace):
         update_template_repo(os.path.join(namespace_dir, template))
         sys.exit(0)
 
-    for tpl_repo in path.list_dirs(namespace_dir, recursion=False):
+    for tpl_repo in list_dirs(namespace_dir, recursion=False):
         update_template_repo(tpl_repo)
 
 
@@ -101,7 +103,7 @@ def update(template, namespace):
 @click.argument('template', type=str)
 @click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
 @click.option('--branch', type=str, default='', help='branch of template')
-@click.option('--output_dir', type=str, default=path.CWD, help='output dir in disk')
+@click.option('--output_dir', type=str, default=CWD, help='output dir in disk')
 @click.option('--echo', is_flag=True, help='flag of echo mode, output_dir will be ignored while echo is specified')
 @click.option('--anti_ignores', type=str, default='', help='anti-ignored files or dirs')
 def render(namespace, branch, template, output_dir, echo, anti_ignores):
@@ -133,14 +135,14 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
         if echo is True:
             click.echo('render dir: {}'.format(dir))
             break
-        path.mkdirs(dir)
+        mkdirs(dir)
     for file, file_content in rendered_files:
         if echo is True:
             click.echo('render file: {}\n{}'.format(file, file_content))
             break
-        file_parent_dir = path.get_parent_path(file, 1)
+        file_parent_dir = get_parent_path(file, 1)
         if not os.path.exists(file_parent_dir):
-            path.mkdirs(file_parent_dir)
+            mkdirs(file_parent_dir)
         with open(file, 'w') as fd:
             fd.write(file_content)
     click.echo('render {}/{}:{} successfully'.format(namespace, template, branch))

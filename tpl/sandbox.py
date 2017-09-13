@@ -1,16 +1,11 @@
 # -*- coding:utf-8 -*-
 
-import os
-import sys
 import time
 import json
 import threading
 import delegator
-from tpl import path
-from tpl import prompt
 from tpl import errors
-
-
+from candy.path.temp import TempPipe
 
 DEFAULT_SHELL_VARS = {
     'pipe': None
@@ -39,7 +34,7 @@ class ShellExec(threading.Thread):
 
 # FIXME 需要添加超时支持
 def shell_execute(command):
-    with path.TempPipe() as tp:
+    with TempPipe() as tp:
         DEFAULT_SHELL_VARS['pipe'] = tp.pipe_path
         ShellExec(command, DEFAULT_SHELL_VARS).start()
         time.sleep(0.5)
