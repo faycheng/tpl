@@ -26,3 +26,20 @@ def test_split_path():
     assert len(sp) == 0
 
 
+def test_match():
+    work_dir = '/Users/root'
+    rule = 'tpl'
+    ir = ignore.IgnoreRule(rule, work_dir)
+
+    path = '{}/templates/tpl'.format(work_dir)
+    assert ir.match(path) is True
+
+    path = '{}/{}'.format(work_dir, random_string())
+    assert ir.match(path) is False
+
+    work_dir = '/Users/root'
+    rule = '*tpl'
+    ir = ignore.IgnoreRule(rule, work_dir)
+
+    path = '{}/{}_tpl'.format(work_dir, random_string())
+    assert ir.match(path) is True
