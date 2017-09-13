@@ -1,5 +1,7 @@
 # tpl
 
+[![Build Status](https://travis-ci.org/faycheng/tpl.svg?branch=master)](https://travis-ci.org/faycheng/tpl)
+
 A command line utility for generating files or directories from template.
 
 Official templates: [https://github.com/python-tpl](https://github.com/python-tpl)
