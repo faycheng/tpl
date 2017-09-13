@@ -29,6 +29,7 @@ def panic_if_path_not_exist(path, type):
 
 def panic_with_exit_code(message='', exit_code=1):
     click.echo('{}\texit code:{}'.format(message, exit_code))
+    sys.exit(1)
 
 
 def locate_constructor_script(repo_dir):
@@ -125,9 +126,9 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
         if check_out_exit_code != 0:
             panic_with_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
     constructor_script = locate_constructor_script(repo_dir)
-    if constructor_script is None:
-        panic_with_exit_code('can not find constructor script in {}'.format(tpl_dir), 1)
-    context = construct_context(constructor_script)
+    context = {}
+    if constructor_script is not None:
+        context = construct_context(constructor_script)
     anti_ignores = [ignore.strip() for ignore in anti_ignores.split(',') if ignore]
     tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir, anti_ignores=anti_ignores)
     rendered_dirs, rendered_files = tpl.render(context)
