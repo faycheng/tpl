@@ -5,6 +5,7 @@ import click
 import sys
 
 from tpl import path
+from tpl.hook import run_hook
 from tpl.core import Template
 from tpl.constructor import construct_context
 
@@ -35,6 +36,12 @@ def locate_constructor_script(repo_dir):
     py_constructor_script = os.path.join(repo_dir, 'constructor.py')
     if os.path.exists(py_constructor_script) and os.path.isfile(py_constructor_script):
         return py_constructor_script
+
+
+def locate_after_render_hook(repo_dir):
+    after_render_hook = os.path.join(repo_dir, 'after_render.sh')
+    if os.path.exists(after_render_hook) and os.path.isfile(after_render_hook):
+        return after_render_hook
 
 
 def update_template_repo(tpl_dir):
@@ -137,6 +144,9 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
         with open(file, 'w') as fd:
             fd.write(file_content)
     click.echo('render {}/{}:{} successfully'.format(namespace, template, branch))
+    after_render_hook = locate_after_render_hook(repo_dir)
+    if after_render_hook:
+        run_hook(after_render_hook)
 
 
 if __name__ == '__main__':
