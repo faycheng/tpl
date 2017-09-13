@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 
+import six
 from enum import Enum
 import prompt_toolkit
 
 from prompt_toolkit.history import FileHistory
-from .completer import *
+from tpl.prompt.completer import *
 from tpl.prompt.validator import *
 from tpl.utils import str2boo
 

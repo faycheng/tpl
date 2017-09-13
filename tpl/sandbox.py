@@ -11,18 +11,6 @@ from tpl import prompt
 from tpl import errors
 
 
-DEFAULT_PY_GLOBALS = {
-    'os': os,
-    'sys': sys,
-    'json': json,
-    'path': path,
-    'mdfifo': os.mkfifo,
-    'prompt': prompt
-}
-
-DEFAULT_PY_LOCALS = {
-    'context_pipe': None
-}
 
 DEFAULT_SHELL_VARS = {
     'pipe': None

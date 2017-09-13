@@ -16,3 +16,5 @@ def render(tpl_text, context):
         value = prompt('{}:'.format(undefined_var))
         context.setdefault(undefined_var, value)
         return render(tpl_text, context)
+
+
