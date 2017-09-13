@@ -29,12 +29,13 @@ def construct_context_from_json():
     pass
 
 
+# TODO refactor construct context from shell
 def construct_context(source):
     assert isinstance(source, str)
-    if source.endswith('.sh'):
-        return construct_context_from_shell(source)
+    # if source.endswith('.sh'):
+    #     return construct_context_from_shell(source)
     if source.endswith('.py'):
         return construct_context_from_py(source)
-    raise TypeError(_('Constructor type is invalid.Source file must be endswith ".sh", ".py"'))
+    raise TypeError(_('Constructor type is invalid.Source file must be endswith ".py"'))
 
 
