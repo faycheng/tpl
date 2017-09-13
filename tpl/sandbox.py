@@ -1,16 +1,11 @@
 # -*- coding:utf-8 -*-
 
-import os
-import sys
 import time
 import json
 import threading
 import delegator
 from tpl import path
-from tpl import prompt
 from tpl import errors
-
-
 
 DEFAULT_SHELL_VARS = {
     'pipe': None
