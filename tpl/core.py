@@ -2,7 +2,7 @@
 
 import os
 from tpl.render import render
-from tpl.ignore import IgnoreRule, parse_rules, is_ignored
+from tpl.ignore import parse_rules, is_ignored
 from candy.path.helper import get_parent_path
 from candy.path.iter import list_dirs, list_files
 
@@ -26,10 +26,10 @@ class Template(object):
     @property
     def ignore_rules(self):
         work_dir = get_parent_path(self.tpl_dir, 1)
-        rules = parse_rules(self.IGNORE_RULRS)
+        rules = parse_rules(self.IGNORE_RULRS, self.tpl_parent_dir)
         ignore_file = os.path.join(work_dir, 'ignores')
         if os.path.exists(ignore_file) and os.path.isfile(ignore_file):
-            rules.extend(parse_rules(ignore_file))
+            rules.extend(parse_rules(ignore_file, self.tpl_parent_dir))
         return rules
 
     def is_ignored_dir(self, dir):
@@ -80,11 +80,11 @@ class Template(object):
         render_dirs = []
         render_files = []
         for dir in list_dirs(self.tpl_dir):
-            if is_ignored(dir):
+            if self.is_ignored(dir):
                 continue
             render_dirs.append(self.render_dir(dir, context))
         for file in list_files(self.tpl_dir):
-            if is_ignored(file):
+            if self.is_ignored(file):
                 continue
             render_files.append(self.render_file(file, context))
         return render_dirs, render_files

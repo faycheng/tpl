@@ -23,7 +23,7 @@ class IgnoreRule(object):
         return False
 
 
-def parse_rules(source):
+def parse_rules(source, work_dir):
     rules = []
     for line in source:
         assert isinstance(line, str)
@@ -32,7 +32,7 @@ def parse_rules(source):
             continue
         if len(line.split(' ')) > 1:
             continue
-        rules.append(IgnoreRule(line, get_parent_path(source, 1)))
+        rules.append(IgnoreRule(line, work_dir))
     return rules
 
 
