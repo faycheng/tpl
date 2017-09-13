@@ -1,9 +1,9 @@
 import sys
 import pytest
 
-from .faker import *
 from tpl.path import TempFile
 from tpl.constructor import construct_context_from_py
+from candy.utils.faker import *
 
 
 def test_construct_context_from_py():
