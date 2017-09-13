@@ -1,6 +1,6 @@
 # tpl
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/faycheng/tpl.svg?branch=master)](https://travis-ci.org/faycheng/tpl)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)[![Build Status](https://travis-ci.org/faycheng/tpl.svg?branch=master)](https://travis-ci.org/faycheng/tpl) ![http://githubbadges.herokuapp.com/faycheng/tpl/release](http://githubbadges.herokuapp.com/faycheng/tpl/release)
 
 A command line utility for generating files or directories from template.
 
