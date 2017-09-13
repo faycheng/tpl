@@ -55,7 +55,7 @@ def test_parse_rules():
     with TempFile() as f:
         f.fd.write(source)
         f.close()
-        rules = ignore.parse_rules(f.path)
+        rules = ignore.parse_rules(open(f.path))
         assert len(rules) == 2
         for rule in rules:
             assert isinstance(rule, ignore.IgnoreRule)

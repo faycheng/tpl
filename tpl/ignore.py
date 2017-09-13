@@ -25,7 +25,7 @@ class IgnoreRule(object):
 
 def parse_rules(source):
     rules = []
-    for line in open(source):
+    for line in source:
         assert isinstance(line, str)
         line = line.strip()
         if line.startswith('#') or not line:
