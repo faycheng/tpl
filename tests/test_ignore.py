@@ -3,6 +3,7 @@
 import pytest
 
 from tpl import ignore
+from candy_path.helper import get_parent_path
 from candy.utils.faker import random_string
 from candy.path.temp import TempFile
 
@@ -55,7 +56,7 @@ def test_parse_rules():
     with TempFile() as f:
         f.fd.write(source)
         f.close()
-        rules = ignore.parse_rules(open(f.path))
+        rules = ignore.parse_rules(open(f.path), get_parent_path(f.path, 1))
         assert len(rules) == 2
         for rule in rules:
             assert isinstance(rule, ignore.IgnoreRule)
