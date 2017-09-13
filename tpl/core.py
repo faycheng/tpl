@@ -2,18 +2,16 @@
 
 import os
 from tpl.render import render
+from tpl.ignore import IgnoreRule, parse_rules, is_ignored
 from candy.path.helper import get_parent_path
 from candy.path.iter import list_dirs, list_files
 
 
 class Template(object):
-    IGNORE_FILES = [
-        'constructor.sh',
-        'constructor.py'
-    ]
-    IGNORE_DIRS = [
+    IGNORE_RULRS = [
         '__pycache__',
-        '.vscode'
+        '.vscode',
+        '*.pyc'
     ]
 
     def __init__(self, tpl_dir, output_dir=None, anti_ignores=None):
@@ -24,6 +22,15 @@ class Template(object):
     @property
     def tpl_parent_dir(self):
         return get_parent_path(self.tpl_dir, 1)
+
+    @property
+    def ignore_rules(self):
+        work_dir = get_parent_path(self.tpl_dir, 1)
+        rules = parse_rules(self.IGNORE_RULRS)
+        ignore_file = os.path.join(work_dir, 'ignores')
+        if os.path.exists(ignore_file) and os.path.isfile(ignore_file):
+            rules.extend(parse_rules(ignore_file))
+        return rules
 
     def is_ignored_dir(self, dir):
         dir_name = dir.split('/')[-1]
@@ -41,6 +48,12 @@ class Template(object):
             return True
         if file_name.endswith('.pyc'):
             return True
+        return False
+
+    def is_ignored(self, path):
+        for ir in self.ignore_rules:
+            if ir.match(path):
+                return True
         return False
 
     def render_file(self, file, context):
@@ -66,13 +79,12 @@ class Template(object):
         assert isinstance(context, dict)
         render_dirs = []
         render_files = []
-        print(self.tpl_dir)
         for dir in list_dirs(self.tpl_dir):
-            if self.is_ignored_dir(dir):
+            if is_ignored(dir):
                 continue
             render_dirs.append(self.render_dir(dir, context))
         for file in list_files(self.tpl_dir):
-            if self.is_ignored_file(file):
+            if is_ignored(file):
                 continue
             render_files.append(self.render_file(file, context))
         return render_dirs, render_files
