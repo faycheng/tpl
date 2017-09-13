@@ -15,7 +15,8 @@ def construct_context_from_shell(source):
 
 
 def construct_context_from_py(source):
-    assert os.path.exists(source) and os.path.isfile(source)
+    if not (os.path.exists(source) and os.path.isfile(source)):
+        return {}
     source_name = source.split('/')[-1][:-3]
     sys.path.insert(0, get_parent_path(source, 1))
     try:
