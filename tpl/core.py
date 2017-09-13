@@ -2,9 +2,9 @@
 
 import os
 from tpl.render import render
-from tpl.ignore import parse_rules, is_ignored
-from candy.path.helper import get_parent_path
-from candy.path.iter import list_dirs, list_files
+from tpl.ignore import parse_rules
+from candy_path.helper import get_parent_path
+from candy_path.iter import list_dirs, list_files
 
 
 class Template(object):

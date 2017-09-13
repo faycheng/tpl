@@ -2,8 +2,6 @@
 
 import fnmatch
 
-from candy.path.helper import get_parent_path
-
 
 class IgnoreRule(object):
     def __init__(self, rule, work_dir):

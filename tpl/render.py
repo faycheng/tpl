@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import jinja2
-from candy.prompt.prompt import prompt
+from candy_prompt.prompt import prompt
 
 env = jinja2.Environment(undefined=jinja2.StrictUndefined)
 
