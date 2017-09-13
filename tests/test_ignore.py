@@ -43,3 +43,22 @@ def test_match():
 
     path = '{}/{}_tpl'.format(work_dir, random_string())
     assert ir.match(path) is True
+
+
+def test_parse_rules():
+    source = """
+    # comment
+       
+    *tpl
+    ?tpl
+    """
+    with TempFile() as f:
+        f.fd.write(source)
+        f.close()
+        rules = ignore.parse_rules(f.path)
+        assert len(rules) == 2
+        for rule in rules:
+            assert isinstance(rule, ignore.IgnoreRule)
+            assert rule.rule in ['*tpl', '?tpl']
+
+
