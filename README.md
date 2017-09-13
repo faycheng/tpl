@@ -27,9 +27,18 @@ Watch the demo:
 Clone this repo to your local machine and move to the repo directory:
 
 ```
-git clone https://github.com/python-tpl.git
-cd python-tpl
+git clone https://github.com/faycheng/tpl.git
+cd tpl
 ```
+
+Init and update submodules:
+
+
+```
+git submodule init
+git submodule update
+```
+
 
 Make `manager.sh` executable and run install command:
 
