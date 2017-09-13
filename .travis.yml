@@ -1,6 +1,6 @@
- language: python
-  python:
-    - 3.6
-  script:
-    - ./manager.sh install
-    - ./manager.sh test
+language: python
+python:
+  - "3.6"
+script:
+  - ./manager.sh install
+  - ./manager.sh test
