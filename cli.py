@@ -140,7 +140,7 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
     for file, file_content in rendered_files:
         if echo is True:
             click.echo('render file: {}\n{}'.format(file, file_content))
-            break
+            continue
         file_parent_dir = get_parent_path(file, 1)
         if not os.path.exists(file_parent_dir):
             mkdirs(file_parent_dir)
