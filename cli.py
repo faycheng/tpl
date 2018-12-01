@@ -10,6 +10,7 @@ from tpl.constructor import construct_context
 from candy_path import HOME, CWD
 from candy_path.helper import mkdirs, get_parent_path
 from candy_path.iter import list_dirs
+from candy_path.path import Path
 
 TPL_STORAGE_DIR = os.path.join(HOME, '.templates')
 
@@ -34,10 +35,12 @@ def panic_with_exit_code(message='', exit_code=1):
 
 def locate_constructor_script(repo_dir):
     shell_constructor_script = os.path.join(repo_dir, 'constructor.sh')
-    if os.path.exists(shell_constructor_script) and os.path.isfile(shell_constructor_script):
+    if os.path.exists(shell_constructor_script) and os.path.isfile(
+            shell_constructor_script):
         return shell_constructor_script
     py_constructor_script = os.path.join(repo_dir, 'constructor.py')
-    if os.path.exists(py_constructor_script) and os.path.isfile(py_constructor_script):
+    if os.path.exists(py_constructor_script) and os.path.isfile(
+            py_constructor_script):
         return py_constructor_script
 
 
@@ -51,10 +54,12 @@ def update_template_repo(tpl_dir):
     if not (os.path.exists(tpl_dir) and os.path.isdir(tpl_dir)):
         click.echo('template repo({}) not exist'.format(tpl_dir))
         return
-    update_command = 'old_path=$(pwd -P) && cd {};git pull --all && cd $old_path'.format(tpl_dir)
+    update_command = 'old_path=$(pwd -P) && cd {};git pull --all && cd $old_path'.format(
+        tpl_dir)
     command_exit_code = os.system(update_command)
     if command_exit_code != 0:
-        click.echo('failed to update {}, exit code:{}'.format(tpl_dir, command_exit_code))
+        click.echo('failed to update {}, exit code:{}'.format(
+            tpl_dir, command_exit_code))
         return
     click.echo('update {} successfully'.format(tpl_dir))
 
@@ -66,7 +71,11 @@ def tpl():
 
 @tpl.command(short_help='pull repo of template from github')
 @click.argument('template', type=str)
-@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
+@click.option(
+    '--namespace',
+    type=str,
+    default=OFFICIAL_NAMESPACE,
+    help='namespace of template')
 def pull(namespace, template):
     """
     \b
@@ -79,9 +88,37 @@ def pull(namespace, template):
     os.system(clone_command)
 
 
+@tpl.command(short_help='show all local templates')
+def list():
+    """
+    \b
+    storage path: ~/.templates/
+    show all local templates.
+    ex: pull hello_world --namespace python-tpl
+    """
+    from tabulate import tabulate
+    npaths = [
+        Path(path) for path in list_dirs(TPL_STORAGE_DIR, recursion=False)
+        if Path(path).is_dir
+    ]
+    table = []
+    for npath in npaths:
+        for tpath in [
+                Path(path)
+                for path in list_dirs(npath.abs_path, recursion=False)
+                if Path(path).is_dir
+        ]:
+            table.append((npath.name, tpath.name))
+    click.echo(tabulate(table, headers=("namespace", "tpl")))
+
+
 @tpl.command(short_help='update specified template or all templates')
 @click.option('--template', type=str, default='', help='name of template')
-@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
+@click.option(
+    '--namespace',
+    type=str,
+    default=OFFICIAL_NAMESPACE,
+    help='namespace of template')
 def update(template, namespace):
     """
     \b
@@ -102,11 +139,20 @@ def update(template, namespace):
 
 @tpl.command(short_help='generate files or dirs to output dir')
 @click.argument('template', type=str)
-@click.option('--namespace', type=str, default=OFFICIAL_NAMESPACE, help='namespace of template')
+@click.option(
+    '--namespace',
+    type=str,
+    default=OFFICIAL_NAMESPACE,
+    help='namespace of template')
 @click.option('--branch', type=str, default='', help='branch of template')
 @click.option('--output_dir', type=str, default=CWD, help='output dir in disk')
-@click.option('--echo', is_flag=True, help='flag of echo mode, output_dir will be ignored while echo is specified')
-@click.option('--anti_ignores', type=str, default='', help='anti-ignored files or dirs')
+@click.option(
+    '--echo',
+    is_flag=True,
+    help='flag of echo mode, output_dir will be ignored while echo is specified'
+)
+@click.option(
+    '--anti_ignores', type=str, default='', help='anti-ignored files or dirs')
 def render(namespace, branch, template, output_dir, echo, anti_ignores):
     """
     \b
@@ -121,16 +167,21 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
     if not (os.path.exists(tpl_dir) and os.path.isdir(tpl_dir)):
         panic_with_exit_code('tpl dir({}) not exist'.format(tpl_dir), 1)
     if branch:
-        check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(repo_dir, branch)
+        check_out_command = 'old_path=$(pwd -P) && cd {};git checkout {} && cd $old_path'.format(
+            repo_dir, branch)
         check_out_exit_code = os.system(check_out_command)
         if check_out_exit_code != 0:
-            panic_with_exit_code('failed to checkout {}'.format(branch), check_out_exit_code)
+            panic_with_exit_code('failed to checkout {}'.format(branch),
+                                 check_out_exit_code)
     constructor_script = locate_constructor_script(repo_dir)
     context = {}
     if constructor_script is not None:
         context = construct_context(constructor_script)
-    anti_ignores = [ignore.strip() for ignore in anti_ignores.split(',') if ignore]
-    tpl = Template(os.path.join(repo_dir, 'tpl'), output_dir, anti_ignores=anti_ignores)
+    anti_ignores = [
+        ignore.strip() for ignore in anti_ignores.split(',') if ignore
+    ]
+    tpl = Template(
+        os.path.join(repo_dir, 'tpl'), output_dir, anti_ignores=anti_ignores)
     rendered_dirs, rendered_files = tpl.render(context)
     for dir in rendered_dirs:
         if echo is True:
@@ -146,7 +197,8 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
             mkdirs(file_parent_dir)
         with open(file, 'w') as fd:
             fd.write(file_content)
-    click.echo('render {}/{}:{} successfully'.format(namespace, template, branch))
+    click.echo('render {}/{}:{} successfully'.format(namespace, template,
+                                                     branch))
     after_render_hook = locate_after_render_hook(repo_dir)
     if after_render_hook:
         run_hook(after_render_hook)
