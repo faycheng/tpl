@@ -3,7 +3,7 @@ import os
 import sys
 import gettext
 from tpl import sandbox
-from candy_path.helper import get_parent_path
+from pykit.path.helper import get_parent_path
 
 _ = gettext.gettext
 

@@ -5,7 +5,7 @@ import json
 import threading
 import delegator
 from tpl import errors
-from candy_path.temp import TempPipe
+from pykit.path.temp import TempPipe
 
 DEFAULT_SHELL_VARS = {
     'pipe': None

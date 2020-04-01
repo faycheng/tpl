@@ -3,8 +3,8 @@
 import os
 from tpl.render import render
 from tpl.ignore import parse_rules
-from candy_path.helper import get_parent_path
-from candy_path.iter import list_dirs, list_files
+from pykit.path.helper import get_parent_path
+from pykit.path.iter import list_dirs, list_files
 
 
 class Template(object):

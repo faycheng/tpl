@@ -7,10 +7,10 @@ import sys
 from tpl.hook import run_hook
 from tpl.core import Template
 from tpl.constructor import construct_context
-from candy_path import HOME, CWD
-from candy_path.helper import mkdirs, get_parent_path
-from candy_path.iter import list_dirs
-from candy_path.path import Path
+from pykit.path import HOME, CWD
+from pykit.path.helper import mkdirs, get_parent_path
+from pykit.path.iter import list_dirs
+from pykit.path.path import Path
 
 TPL_STORAGE_DIR = os.path.join(HOME, '.templates')
 

@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 
 from tpl import ignore
-from candy_path.helper import get_parent_path
-from candy_utils.faker import random_string
-from candy_path.temp import TempFile
+from pykit.path.helper import get_parent_path
+from pykit.utils.faker import random_string
+from pykit.path.temp import TempFile
 
 
 def test_split_path():

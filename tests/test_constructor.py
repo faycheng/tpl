@@ -2,8 +2,8 @@ import sys
 import pytest
 
 from tpl.constructor import construct_context_from_py
-from candy_path.temp import TempFile
-from candy_utils.faker import random_lower_string
+from pykit.path.temp import TempFile
+from pykit.utils.faker import random_lower_string
 
 
 def test_construct_context_from_py():

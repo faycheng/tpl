@@ -2,7 +2,7 @@
 
 import jinja2
 import ast
-from candy_prompt.prompt import prompt
+from pykit.prompt.prompt import prompt
 
 env = jinja2.Environment(undefined=jinja2.StrictUndefined)
 
