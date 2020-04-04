@@ -86,5 +86,8 @@ class Template(object):
         for file in list_files(self.tpl_dir):
             if self.is_ignored(file):
                 continue
-            render_files.append(self.render_file(file, context))
+            file, content = self.render_file(file, context)
+            if not content:
+                continue
+            render_files.append([file, content])
         return render_dirs, render_files

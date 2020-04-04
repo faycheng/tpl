@@ -3,6 +3,7 @@
 import os
 import click
 import sys
+import ast
 
 from tpl.hook import run_hook
 from tpl.core import Template
@@ -63,6 +64,38 @@ def update_template_repo(tpl_dir):
         return
     click.echo('update {} successfully'.format(tpl_dir))
 
+
+def literal_eval(text):
+    try:
+        return ast.literal_eval(text)
+    except ValueError:
+        return text
+
+def parse_args(ctx):
+    args = []
+    for text in ctx.args:
+        if "--" in text:
+            break
+        args.append(literal_eval(text))
+    return args
+
+
+def parse_kwargs(ctx):
+    kwargs = {}
+    k, v = None, None
+    for text in ctx.args:
+        if "--" in text:
+            if "=" in text:
+                text = text.strip("-")
+                kwargs[text.split("=")[0]] = literal_eval(text.split("=")[-1])
+                continue
+            k = text.strip("-")
+            continue
+        if k is not None:
+            kwargs[k] = literal_eval(text)
+            k = None
+            continue
+    return kwargs
 
 @click.group()
 def tpl():
@@ -137,7 +170,10 @@ def update(template, namespace):
         update_template_repo(tpl_repo)
 
 
-@tpl.command(short_help='generate files or dirs to output dir')
+@tpl.command(short_help='generate files or dirs to output dir', context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
 @click.argument('template', type=str)
 @click.option(
     '--namespace',
@@ -153,12 +189,15 @@ def update(template, namespace):
 )
 @click.option(
     '--anti_ignores', type=str, default='', help='anti-ignored files or dirs')
-def render(namespace, branch, template, output_dir, echo, anti_ignores):
+@click.pass_context
+def render(ctx, namespace, branch, template, output_dir, echo, anti_ignores):
     """
     \b
     generate files or dirs to output dir according to specified template
     ex: render hello_world --namespace python-tpl --branch master --output_dir $HOME
     """
+    args = parse_args(ctx)
+    kwargs = parse_kwargs(ctx)
     repo_dir = '{}/{}/{}'.format(TPL_STORAGE_DIR, namespace, template)
     tpl_dir = os.path.join(repo_dir, 'tpl')
     panic_if_path_not_exist(repo_dir, 'dir')
@@ -176,7 +215,7 @@ def render(namespace, branch, template, output_dir, echo, anti_ignores):
     constructor_script = locate_constructor_script(repo_dir)
     context = {}
     if constructor_script is not None:
-        context = construct_context(constructor_script)
+        context = construct_context(constructor_script, *args, **kwargs)
     anti_ignores = [
         ignore.strip() for ignore in anti_ignores.split(',') if ignore
     ]
