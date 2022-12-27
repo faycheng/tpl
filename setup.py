@@ -152,7 +152,7 @@ setup(
     author='程飞',
     url='https://github.com/faycheng/tpl.git',
     packages=find_packages(exclude=['tests']),
-    install_requires=['Jinja2==2.9.6', 'setuptools==36.4.0', 'delegator.py==0.0.13', 'pytest==3.2.1', 'click==6.7', 'prompt_toolkit==1.0.15'],
+    install_requires=['Jinja2==2.9.6', 'setuptools==65.5.1', 'delegator.py==0.0.13', 'pytest==3.2.1', 'click==6.7', 'prompt_toolkit==1.0.15'],
     entry_points={
         'console_scripts': ['tpl=cli:tpl'],
     },
